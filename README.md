@@ -84,8 +84,8 @@ pip install sentence-transformers transformers scikit-learn pandas matplotlib se
 ## 👥 Ekibimiz: IstanBuilders
 
 * **Rana İşlek**
-* **Yiğit**
-* **Zeynep**
+* **Yiğit Gümüşlü**
+* **Zeynep Sıla Kaya**
 
 > "Dereceye girmemiş olsak da, 32 saat boyunca çalışan bir ürün ortaya koymak ve gerçek bir veri setini uçtan uca işlemek bizim için paha biçilemez bir deneyimdi." 
 
