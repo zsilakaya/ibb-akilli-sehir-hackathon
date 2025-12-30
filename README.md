@@ -1,132 +1,107 @@
-# ibb-hackathon-2025
-Yapay Zeka Destekli Başvuru Takip Platformu
-=======
-# İstanBuilders Complaint Classification System
+# 🚀 İstanBuilders: Yapay Zeka Destekli Akıllı Başvuru Takip Sistemi
 
-A machine learning system for classifying Turkish municipal complaints using semantic similarity and storing data in PostgreSQL with pgvector for vector similarity search.
+Bu proje, **İBB Tech Istanbul Yapay Zeka Hackathonu (Aralık 2025)** kapsamında **IstanBuilders** ekibi tarafından 32 saatlik kesintisiz bir maraton sürecinde geliştirilmiştir. Projemiz, "Akıllı Şehir" teması altında, var olan belediye hizmetlerinin yapay zeka ile iyileştirilmesi vizyonuna odaklanmıştır.
 
-## Features
+## 📋 Problem Tanımı & Çözüm Vizyonu
 
-- **Complaint Classification**: Classifies complaints into 12 categories using Turkish BERT model
-- **Vector Database**: Stores complaint embeddings in PostgreSQL with pgvector extension
-- **Similarity Search**: Fast semantic search for similar complaints
-- **Performance Analysis**: Comprehensive evaluation metrics and visualizations
+İstanbul Büyükşehir Belediyesi'ne gelen vatandaş şikayetlerinin manuel olarak yönlendirilmesi; zaman alıcı, hataya açık ve maliyetli bir süreçtir. Doğru kategorizasyon, belediye hizmet verimliliği için kritiktir.
 
-## Categories
+**IstanBuilders olarak çözümümüz:**
 
-1. su_kanalizasyon (Water & Sewage)
-2. atik_yonetimi (Waste Management)
-3. temizlik (Cleaning)
-4. ulasim_trafik (Transportation & Traffic)
-5. yol_altyapi (Road & Infrastructure)
-6. yesil_alan_bahce (Green Areas & Gardens)
-7. aydinlatma (Lighting)
-8. sosyal_yardim (Social Assistance)
-9. fatura_odeme (Bills & Payments)
-10. basvuru_ruhsat (Applications & Permits)
-11. sikayet_takip (Complaint Tracking)
-12. dijital_sistem (Digital Systems)
+* 
+**Otomatik Sınıflandırma:** Gelen serbest metin şikayetlerini semantik analiz ile otomatik olarak 12 farklı kategoriye ayırır.
 
-## Setup
 
-### Prerequisites
+* 
+**Anlık Operasyonel Takip:** Şikayetler anlık olarak ilgili birimin PowerBI tabanlı dashboard'una düşer ve harita üzerinden lokasyon bazlı takip edilebilir.
 
-- Docker & Docker Compose
-- Python 3.11+
-- Conda/Miniconda
 
-### 1. Start PostgreSQL with pgvector
+* **Genişletilebilirlik:** Sistem, sesli şikayetler (Alo 153) veya görsel veriler üzerinde de çalışabilecek esnekliktedir.
+
+---
+
+## 🛠 Teknik Mimari
+
+Projemizin en büyük farkı, yüksek maliyetli kapalı kaynaklı LLM'ler (ChatGPT vb.) yerine **tamamen yerel ve masrafsız** bir NLP mimarisi kullanmasıdır.
+
+* 
+**Model:** `emrecan/bert-base-turkish-cased-mean-nli-stsb-tr` (TurkishBERT).
+
+
+* 
+**Vektör Veritabanı:** PostgreSQL üzerinde **pgvector** eklentisi ile 768 boyutlu vektör benzerlik araması (cosine similarity).
+
+
+* 
+**Entegrasyon:** Dockerized mimari ve anlık veri aktarımı.
+
+
+
+### 📊 Sınıflandırılan Kategoriler
+
+Sistem, şikayetleri aşağıdaki ana departmanlara otomatik olarak yönlendirir:
+
+1. Su & Kanalizasyon
+2. Atık Yönetimi
+3. Temizlik
+4. Ulaşım & Trafik
+5. Yol & Altyapı
+6. Yeşil Alan & Bahçe
+7. Aydınlatma
+8. Sosyal Yardım
+9. Fatura & Ödeme
+10. Başvuru & Ruhsat
+11. Şikayet Takip
+12. Dijital Sistemler
+
+---
+
+## 🚀 Kurulum ve Çalıştırma
+
+### 1. Veritabanını Başlatın (Docker)
+
+PostgreSQL 16 ve pgvector eklentisini içeren container'ı ayağa kaldırın:
 
 ```bash
 docker-compose up -d
+
 ```
 
-This will start a PostgreSQL 16 container with pgvector extension on port 5432.
-
-### 2. Install Python Dependencies
+### 2. Bağımlılıkları Yükleyin
 
 ```bash
-pip install -q sentence-transformers transformers scikit-learn pandas matplotlib seaborn numpy psycopg2-binary pgvector
+pip install sentence-transformers transformers scikit-learn pandas matplotlib seaborn numpy psycopg2-binary pgvector
+
 ```
 
-### 3. Run the Notebook
+### 3. Notebook'u Çalıştırın
 
-Open `istanbuilders_final.ipynb` and run all cells in order:
+`istanbuilders_final.ipynb` dosyasını açarak hücreleri sırasıyla takip edin. Sistem otomatik olarak:
 
-1. **Cell 1**: Install dependencies
-2. **Cell 2**: Import libraries
-3. **Cell 3**: Define complaint templates
-4. **Cell 4**: Load Turkish BERT model
-5. **Cell 5**: Build template embeddings
-6. **Cell 6**: Define classification function
-7. **Cell 7**: Load data from CSV files
-8. **Database cells**: Connect to PostgreSQL, create tables, store data
-9. **Cell 8**: Run predictions and analysis
-10. **Cell 9**: Generate confusion matrix and visualizations
-11. **Cell 10**: Save results to CSV
+* BERT modelini yükler,
+* Şikayet taslaklarını vektörize eder,
+* Verileri PostgreSQL'e aktarır ve sınıflandırma analizini gerçekleştirir.
 
-## Database Schema
+---
 
-### departments
-- `department_id` (PRIMARY KEY)
-- `category_name`
-- `description`
+## 🏗 Veritabanı Şeması
 
-### complaints
-- `ticket_id` (PRIMARY KEY)
-- `complaint_text`
-- `department_id` (FOREIGN KEY)
-- `predicted_category`
-- `prediction_confidence`
-- `created_at`
+* **`departments`**: Kategori tanımları ve açıklamaları.
+* **`complaints`**: Ham metin, tahmin edilen kategori, güven skoru ve zaman damgası.
+* **`complaint_embeddings`**: Hızlı semantik arama için `vector(768)` tipinde saklanan embeddingler.
 
-### complaint_embeddings
-- `id` (PRIMARY KEY)
-- `ticket_id` (FOREIGN KEY)
-- `embedding` (vector(768))
-- `created_at`
+---
 
-## Vector Similarity Search
+## 👥 Ekibimiz: IstanBuilders
 
-The system uses pgvector's cosine similarity operator (`<=>`) for fast semantic search:
+* **Rana İşlek**
+* **Yiğit**
+* **Zeynep**
 
-```python
-search_similar_complaints("Sokakta çöp konteynerleri dolu", model, top_k=5)
-```
+> "Dereceye girmemiş olsak da, 32 saat boyunca çalışan bir ürün ortaya koymak ve gerçek bir veri setini uçtan uca işlemek bizim için paha biçilemez bir deneyimdi." 
+> 
+> 
 
-## Model
+---
 
-Uses Turkish BERT model: `emrecan/bert-base-turkish-cased-mean-nli-stsb-tr`
-- Embedding dimension: 768
-- Optimized for Turkish sentence embeddings
-
-## Database Configuration
-
-Default configuration (can be changed in `docker-compose.yml`):
-- Host: `localhost`
-- Port: `5432`
-- Database: `complaints_db`
-- User: `istanbuilders`
-- Password: `istanbuilders123`
-
-## Stopping the Database
-
-```bash
-docker-compose down
-```
-
-To remove volumes as well:
-```bash
-docker-compose down -v
-```
-
-## Files
-
-- `istanbuilders_final.ipynb` - Main notebook
-- `docker-compose.yml` - PostgreSQL + pgvector setup
-- `data/complaints.csv` - Sample complaints data
-- `data/departments.csv` - Department categories
-- `prediction_results.csv` - Classification results (generated)
-- `category_performance.csv` - Performance metrics (generated)
-- `wrong_predictions.csv` - Misclassified complaints (generated)
->>>>>>> 7779c6e (oley bitti)
+**İBB Tech Istanbul 2025** 
